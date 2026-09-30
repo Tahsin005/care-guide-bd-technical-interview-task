@@ -5,6 +5,7 @@ export interface IUserRepository {
   findByEmail(email: string, includePassword?: boolean): Promise<IUserDocument | null>;
   findById(id: string, includePassword?: boolean): Promise<IUserDocument | null>;
   existsByEmail(email: string): Promise<boolean>;
+  existsByEmailExcludingId(email: string, excludeId: string): Promise<boolean>;
   findAll(filter: Record<string, any>, skip: number, limit: number): Promise<IUserDocument[]>;
   count(filter?: Record<string, any>): Promise<number>;
   updateById(id: string, updateData: Partial<IUser>): Promise<IUserDocument | null>;
@@ -40,6 +41,17 @@ export class UserRepository implements IUserRepository {
 
   public async existsByEmail(email: string): Promise<boolean> {
     const count = await User.countDocuments({ email: email.toLowerCase().trim() });
+    return count > 0;
+  }
+
+  public async existsByEmailExcludingId(
+    email: string,
+    excludeId: string
+  ): Promise<boolean> {
+    const count = await User.countDocuments({
+      email: email.toLowerCase().trim(),
+      _id: { $ne: excludeId },
+    });
     return count > 0;
   }
 
