@@ -1,0 +1,103 @@
+<svg viewBox="0 0 190 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fav_R_outer" x1="157" y1="22" x2="157" y2="166" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ebe6d3" />
+      <stop offset="100%" stop-color="#8e865f" />
+    </linearGradient>
+    <linearGradient id="fav_R01" x1="157" y1="22" x2="153" y2="157" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#dfd9c1" />
+      <stop offset="100%" stop-color="#928a64" />
+    </linearGradient>
+    <linearGradient id="fav_R12" x1="103" y1="10" x2="153" y2="157" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fdfbf3" />
+      <stop offset="40%" stop-color="#e4ded0" />
+      <stop offset="100%" stop-color="#b4ac91" />
+    </linearGradient>
+    <linearGradient id="fav_R23" x1="103" y1="10" x2="115" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b835e" />
+      <stop offset="100%" stop-color="#554d32" />
+    </linearGradient>
+    <linearGradient id="fav_R34" x1="54" y1="13" x2="153" y2="157" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fdfbf3" />
+      <stop offset="45%" stop-color="#e6dfce" />
+      <stop offset="100%" stop-color="#b8af94" />
+    </linearGradient>
+    <linearGradient id="fav_R45" x1="54" y1="13" x2="85" y2="95" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#787050" />
+      <stop offset="100%" stop-color="#38321e" />
+    </linearGradient>
+
+    <linearGradient id="fav_L_outer" x1="13" y1="166" x2="13" y2="21" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ebe6d3" />
+      <stop offset="100%" stop-color="#8e865f" />
+    </linearGradient>
+    <linearGradient id="fav_L01" x1="13" y1="166" x2="17" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#dfd9c1" />
+      <stop offset="100%" stop-color="#928a64" />
+    </linearGradient>
+    <linearGradient id="fav_L12" x1="66" y1="177" x2="17" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fdfbf3" />
+      <stop offset="40%" stop-color="#e4ded0" />
+      <stop offset="100%" stop-color="#b4ac91" />
+    </linearGradient>
+    <linearGradient id="fav_L23" x1="66" y1="177" x2="55" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b835e" />
+      <stop offset="100%" stop-color="#554d32" />
+    </linearGradient>
+    <linearGradient id="fav_L34" x1="115" y1="174" x2="17" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fdfbf3" />
+      <stop offset="45%" stop-color="#e6dfce" />
+      <stop offset="100%" stop-color="#b8af94" />
+    </linearGradient>
+    <linearGradient id="fav_L45" x1="115" y1="174" x2="85" y2="95" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#787050" />
+      <stop offset="100%" stop-color="#38321e" />
+    </linearGradient>
+
+    <linearGradient id="fav_diag" x1="17" y1="30" x2="153" y2="157" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="#f8f4e6" />
+      <stop offset="100%" stop-color="#ded7c2" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(10, 1.5)">
+    <polygon points="13,21 17,30 13,166" fill="url(#fav_L_outer)" />
+    <polygon points="157,166 153,157 157,22" fill="url(#fav_R_outer)" />
+
+    <polygon points="153,157 157,22 122,52" fill="url(#fav_R01)" />
+    <polygon points="153,157 122,52 103,10" fill="url(#fav_R12)" />
+    <polygon points="153,157 103,10 90,58" fill="url(#fav_R23)" />
+    <polygon points="153,157 90,58 54,13" fill="url(#fav_R34)" />
+    <polygon points="153,157 54,13 17,30" fill="url(#fav_R45)" />
+
+    <polygon points="17,30 13,166 47,135" fill="url(#fav_L01)" />
+    <polygon points="17,30 47,135 66,177" fill="url(#fav_L12)" />
+    <polygon points="17,30 66,177 79,129" fill="url(#fav_L23)" />
+    <polygon points="17,30 79,129 115,174" fill="url(#fav_L34)" />
+    <polygon points="17,30 115,174 153,157" fill="url(#fav_L45)" />
+
+    <polygon points="17,30 153,157 149,158 15,34" fill="url(#fav_diag)" />
+
+    <line x1="153" y1="157" x2="157" y2="22" stroke="#fffdf6" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+    <line x1="153" y1="157" x2="103" y2="10" stroke="#fffdf6" stroke-width="2.8" stroke-linecap="round" opacity="0.95" />
+    <line x1="153" y1="157" x2="54" y2="13" stroke="#fffdf6" stroke-width="2.8" stroke-linecap="round" opacity="0.95" />
+
+    <line x1="17" y1="30" x2="13" y2="166" stroke="#fffdf6" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+    <line x1="17" y1="30" x2="66" y2="177" stroke="#fffdf6" stroke-width="2.8" stroke-linecap="round" opacity="0.95" />
+    <line x1="17" y1="30" x2="115" y2="174" stroke="#fffdf6" stroke-width="2.8" stroke-linecap="round" opacity="0.95" />
+
+    <line x1="17" y1="30" x2="153" y2="157" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" opacity="1" />
+    <line x1="13" y1="21" x2="13" y2="166" stroke="#fffdf6" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+    <line x1="157" y1="22" x2="157" y2="166" stroke="#fffdf6" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+
+    <circle cx="54" cy="13" r="2.2" fill="#fffdf6" />
+    <circle cx="103" cy="10" r="2.2" fill="#fffdf6" />
+    <circle cx="157" cy="22" r="2" fill="#fffdf6" />
+    <circle cx="13" cy="21" r="2" fill="#fffdf6" />
+    <circle cx="66" cy="177" r="2.2" fill="#fffdf6" />
+    <circle cx="115" cy="174" r="2.2" fill="#fffdf6" />
+    <circle cx="13" cy="166" r="2" fill="#fffdf6" />
+    <circle cx="157" cy="166" r="2" fill="#fffdf6" />
+  </g>
+</svg>
