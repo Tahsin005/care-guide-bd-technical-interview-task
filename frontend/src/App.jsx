@@ -9,6 +9,7 @@ import { HomePage } from './pages/HomePage';
 import { SignUpPage } from './pages/SignUpPage';
 import { SignInPage } from './pages/SignInPage';
 import { NotesPage } from './pages/NotesPage';
+import { PostsPage } from './pages/PostsPage';
 import { AdminPage } from './pages/AdminPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
@@ -34,6 +35,7 @@ export function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/notes" element={<NotesPage />} />
+            <Route path="/posts" element={<PostsPage />} />
           </Route>
 
           <Route element={<AdminRoute />}>

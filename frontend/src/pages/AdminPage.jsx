@@ -9,6 +9,8 @@ import {
 } from '../hooks/useAdminUsers';
 import { UsersTable } from '../components/admin/UsersTable';
 import { UserModal } from '../components/admin/UserModal';
+import { UserPostsModal } from '../components/admin/UserPostsModal';
+import { InterestsAggregation } from '../components/admin/InterestsAggregation';
 import { DeleteConfirmModal } from '../components/notes/DeleteConfirmModal';
 import {
   UserPlus,
@@ -19,6 +21,7 @@ import {
   Filter,
   ChevronDown,
   Check,
+  Tag,
 } from 'lucide-react';
 
 const ROLE_OPTIONS = [
@@ -29,6 +32,7 @@ const ROLE_OPTIONS = [
 
 export function AdminPage() {
   const { user: currentUser } = useAuthStore();
+  const [activeTab, setActiveTab] = useState('users');
   const [page, setPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState('');
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -63,6 +67,7 @@ export function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [postsUser, setPostsUser] = useState(null);
 
   const users = useMemo(() => data?.users || [], [data?.users]);
   const pagination = data?.pagination || {
@@ -116,84 +121,112 @@ export function AdminPage() {
       <Navbar />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-10 space-y-8">
-
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl sm:text-3xl font-bold text-[#1e293b]">
-                User Management
+                Admin Dashboard
               </h1>
+              <span className="px-2.5 py-0.5 text-xs font-semibold bg-[#3d6157]/10 text-[#3d6157] rounded-full border border-[#3d6157]/20">
+                Admin
+              </span>
             </div>
             <p className="mt-1 text-sm text-[#59766e]">
-              Manage user accounts, roles, and administrative permissions.
+              Manage user accounts, roles, and view MongoDB aggregation analytics.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative" ref={roleDropdownRef}>
+          {activeTab === 'users' && (
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative" ref={roleDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsRoleDropdownOpen((prev) => !prev)}
+                  className="inline-flex items-center justify-between gap-2.5 px-5 py-2.5 bg-white hover:bg-[#f8fafc] text-xs font-semibold text-[#1e293b] rounded-xl border border-[#e6e9ed] hover:border-[#3d6157]/40 shadow-xs hover:shadow-md transition-all cursor-pointer min-w-[130px]"
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-3.5 h-3.5 text-[#59766e]" />
+                    <span>
+                      {ROLE_OPTIONS.find((opt) => opt.value === roleFilter)?.label ||
+                        'All Roles'}
+                    </span>
+                  </div>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-[#59766e] transition-transform duration-200 ${isRoleDropdownOpen ? 'rotate-180 text-[#3d6157]' : ''
+                      }`}
+                  />
+                </button>
+
+                {isRoleDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-2xl border border-[#e6e9ed] shadow-xl p-1.5 z-30 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3 py-1.5 text-[10px] font-bold tracking-wider text-[#94a3b8]">
+                      Filter by Role
+                    </div>
+                    {ROLE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setRoleFilter(opt.value);
+                          setPage(1);
+                          setIsRoleDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${roleFilter === opt.value
+                            ? 'bg-[#3d6157]/10 text-[#3d6157]'
+                            : 'text-[#1e293b] hover:bg-[#f4f6f8]'
+                          }`}
+                      >
+                        <span>{opt.label}</span>
+                        {roleFilter === opt.value && (
+                          <Check className="w-3.5 h-3.5 text-[#3d6157]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button
                 type="button"
-                onClick={() => setIsRoleDropdownOpen((prev) => !prev)}
-                className="inline-flex items-center justify-between gap-2.5 px-5 py-2.5 bg-white hover:bg-[#f8fafc] text-xs font-semibold text-[#1e293b] rounded-xl border border-[#e6e9ed] hover:border-[#3d6157]/40 shadow-xs hover:shadow-md transition-all cursor-pointer min-w-[130px]"
+                onClick={handleOpenCreate}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3d6157] hover:bg-[#34534a] text-white text-xs font-semibold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
               >
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5 text-[#59766e]" />
-                  <span>
-                    {ROLE_OPTIONS.find((opt) => opt.value === roleFilter)?.label ||
-                      'All Roles'}
-                  </span>
-                </div>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 text-[#59766e] transition-transform duration-200 ${
-                    isRoleDropdownOpen ? 'rotate-180 text-[#3d6157]' : ''
-                  }`}
-                />
+                <UserPlus className="w-4 h-4" />
+                <span>New User</span>
               </button>
-
-              {isRoleDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-2xl border border-[#e6e9ed] shadow-xl p-1.5 z-30 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#94a3b8]">
-                    Filter by Role
-                  </div>
-                  {ROLE_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setRoleFilter(opt.value);
-                        setPage(1);
-                        setIsRoleDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
-                        roleFilter === opt.value
-                          ? 'bg-[#3d6157]/10 text-[#3d6157]'
-                          : 'text-[#1e293b] hover:bg-[#f4f6f8]'
-                      }`}
-                    >
-                      <span>{opt.label}</span>
-                      {roleFilter === opt.value && (
-                        <Check className="w-3.5 h-3.5 text-[#3d6157]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
-
-
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3d6157] hover:bg-[#34534a] text-white text-xs font-semibold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>New User</span>
-            </button>
-          </div>
+          )}
         </div>
 
 
-        {isLoading ? (
+        <div className="flex items-center gap-2 border-b border-[#e6e9ed] pb-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab('users')}
+            className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${activeTab === 'users'
+                ? 'bg-[#3d6157] text-white shadow-xs'
+                : 'text-[#59766e] hover:text-[#1e293b] hover:bg-white'
+              }`}
+          >
+            User Accounts
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('interests')}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${activeTab === 'interests'
+                ? 'bg-[#3d6157] text-white shadow-xs'
+                : 'text-[#59766e] hover:text-[#1e293b] hover:bg-white'
+              }`}
+          >
+            <Tag className="w-3.5 h-3.5" />
+            <span>Interests Aggregation</span>
+          </button>
+        </div>
+
+
+        {activeTab === 'interests' ? (
+          <InterestsAggregation />
+        ) : isLoading ? (
           <div className="bg-white rounded-3xl border border-[#e6e9ed] shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -286,6 +319,7 @@ export function AdminPage() {
               currentUserId={currentUser?._id}
               onEdit={handleOpenEdit}
               onDelete={handleDeleteRequest}
+              onViewPosts={(u) => setPostsUser(u)}
             />
 
             {pagination.totalPages > 1 && (
@@ -327,6 +361,12 @@ export function AdminPage() {
         user={selectedUser}
         onSave={handleSaveUser}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <UserPostsModal
+        isOpen={Boolean(postsUser)}
+        onClose={() => setPostsUser(null)}
+        user={postsUser}
       />
 
       <DeleteConfirmModal

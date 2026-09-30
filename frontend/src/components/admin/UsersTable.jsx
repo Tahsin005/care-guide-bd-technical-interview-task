@@ -1,5 +1,5 @@
 import { Blobatar } from '@blobatar/react';
-import { Shield, ShieldAlert, Pencil, Trash2, Calendar } from 'lucide-react';
+import { Shield, ShieldAlert, Pencil, Trash2, Calendar, FileText } from 'lucide-react';
 
 function formatDate(dateString) {
   if (!dateString) return '—';
@@ -15,7 +15,7 @@ function formatDate(dateString) {
   }
 }
 
-export function UsersTable({ users = [], currentUserId, onEdit, onDelete }) {
+export function UsersTable({ users = [], currentUserId, onEdit, onDelete, onViewPosts }) {
   return (
     <div className="bg-white rounded-3xl border border-[#e6e9ed] shadow-xs overflow-hidden">
       <div className="overflow-x-auto">
@@ -124,6 +124,15 @@ export function UsersTable({ users = [], currentUserId, onEdit, onDelete }) {
 
                   <td className="py-4 pl-4 pr-6 align-middle text-right whitespace-nowrap">
                     <div className="inline-flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => onViewPosts && onViewPosts(u)}
+                        title="View user's posts ($lookup aggregation)"
+                        aria-label="View user posts"
+                        className="p-1.5 text-[#59766e] hover:text-[#3d6157] hover:bg-[#3d6157]/10 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <FileText className="w-4 h-4" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => onEdit(u)}

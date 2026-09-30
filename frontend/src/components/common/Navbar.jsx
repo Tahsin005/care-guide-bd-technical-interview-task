@@ -39,6 +39,16 @@ export function Navbar() {
               >
                 Notes
               </Link>
+              <Link
+                to="/posts"
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+                  location.pathname === '/posts'
+                    ? 'bg-[#3d6157]/10 text-[#3d6157]'
+                    : 'text-[#59766e] hover:text-[#1e293b] hover:bg-[#f4f6f8]'
+                }`}
+              >
+                Posts
+              </Link>
               {user?.role === 'admin' && (
                 <Link
                   to="/admin"
