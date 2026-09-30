@@ -4,11 +4,12 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { queryClient } from './lib/queryClient';
 import { useAuthStore } from './store/authStore';
-import { ProtectedRoute, PublicRoute } from './components/common/RouteGuard';
+import { ProtectedRoute, PublicRoute, AdminRoute } from './components/common/RouteGuard';
 import { HomePage } from './pages/HomePage';
 import { SignUpPage } from './pages/SignUpPage';
 import { SignInPage } from './pages/SignInPage';
 import { NotesPage } from './pages/NotesPage';
+import { AdminPage } from './pages/AdminPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 export function App() {
@@ -33,6 +34,10 @@ export function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/notes" element={<NotesPage />} />
+          </Route>
+
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

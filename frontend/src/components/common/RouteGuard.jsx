@@ -27,6 +27,25 @@ export function ProtectedRoute({ children }) {
   return children ? children : <Outlet />;
 }
 
+export function AdminRoute({ children }) {
+  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const location = useLocation();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/notes" replace />;
+  }
+
+  return children ? children : <Outlet />;
+}
+
 export function PublicRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuthStore();
 
@@ -40,3 +59,4 @@ export function PublicRoute({ children }) {
 
   return children ? children : <Outlet />;
 }
+

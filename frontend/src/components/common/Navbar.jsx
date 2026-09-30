@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Blobatar } from '@blobatar/react';
 import 'blobatar/motion.css';
 import { NotefulLogo } from './NotefulLogo';
@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 
 export function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -21,9 +22,38 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#e6e9ed]">
       <div className="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
-        <Link to={'/'}>
-          <NotefulLogo variant="light" className="w-36 h-auto" />
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to={'/'}>
+            <NotefulLogo variant="light" className="w-36 h-auto" />
+          </Link>
+
+          {isAuthenticated && (
+            <nav className="flex items-center gap-1">
+              <Link
+                to="/notes"
+                className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+                  location.pathname === '/notes'
+                    ? 'bg-[#3d6157]/10 text-[#3d6157]'
+                    : 'text-[#59766e] hover:text-[#1e293b] hover:bg-[#f4f6f8]'
+                }`}
+              >
+                Notes
+              </Link>
+              {user?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all ${
+                    location.pathname === '/admin'
+                      ? 'bg-[#3d6157]/10 text-[#3d6157]'
+                      : 'text-[#59766e] hover:text-[#1e293b] hover:bg-[#f4f6f8]'
+                  }`}
+                >
+                  Admin
+                </Link>
+              )}
+            </nav>
+          )}
+        </div>
 
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
