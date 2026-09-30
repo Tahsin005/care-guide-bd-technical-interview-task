@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotefulLogo } from '../components/common/NotefulLogo';
-import { User, Mail, Lock, Sparkles, ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
-import { signUpSchema } from '../lib/validations/auth.schema';
+import { signInSchema } from '../lib/validations/auth.schema';
 
-export function SignUpPage() {
+export function SignInPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -20,76 +21,45 @@ export function SignUpPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signInSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
-      interests: '',
     },
   });
 
   const onSubmit = async (formData) => {
-    const interests = (formData.interests || '')
-      .split(',')
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean);
-
     try {
-      const response = await api.post('/auth/register', {
-        name: formData.name.trim(),
+      const response = await api.post('/auth/login', {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        interests,
       });
 
       const { token, user } = response.data;
       setAuth(token, user);
-      toast.success('Account created successfully');
-      navigate('/notes', { replace: true });
+      toast.success('Signed in successfully');
+
+      const origin = location.state?.from?.pathname || '/notes';
+      navigate(origin, { replace: true });
     } catch (err) {
-      toast.error(err.message || 'Registration failed');
+      toast.error(err.message || 'Invalid email or password');
     }
   };
 
   return (
     <main className="min-h-screen w-full bg-[#f4f6f8] flex flex-col items-center justify-center p-6 selection:bg-[#3d6157] selection:text-white">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-[#e6e9ed] overflow-hidden my-8">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-[#e6e9ed] overflow-hidden">
         <div className="px-8 pt-10 pb-6 flex flex-col items-center justify-center text-center border-b border-[#f0f2f5]">
           <NotefulLogo variant="light" className="w-48 h-auto" />
           <h1 className="mt-4 text-xl font-bold text-[#1e293b]">
-            Create your account
+            Sign in to Noteful
           </h1>
           <p className="mt-1.5 text-xs font-medium text-[#59766e]">
-            Start writing and organizing your thoughts securely
+            Access your encrypted notes and knowledge
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[#59766e] uppercase tracking-wider mb-1.5">
-              Full Name
-            </label>
-            <div className="relative">
-              <User className="absolute left-3.5 top-3 w-4 h-4 text-[#59766e]" />
-              <input
-                type="text"
-                {...register('name')}
-                placeholder="Jane Doe"
-                className={`w-full pl-10 pr-4 py-2.5 bg-[#f4f6f8] border rounded-xl text-sm text-[#1e293b] outline-none transition-colors placeholder:text-[#94a3b8] ${
-                  errors.name
-                    ? 'border-[#b91c1c] focus:border-[#b91c1c] focus:bg-white'
-                    : 'border-[#e6e9ed] focus:border-[#467368] focus:bg-white'
-                }`}
-              />
-            </div>
-            {errors.name && (
-              <p className="mt-1 text-xs text-[#b91c1c]">
-                {errors.name.message}
-              </p>
-            )}
-          </div>
-
           <div>
             <label className="block text-xs font-semibold text-[#59766e] uppercase tracking-wider mb-1.5">
               Email Address
@@ -99,7 +69,7 @@ export function SignUpPage() {
               <input
                 type="email"
                 {...register('email')}
-                placeholder="jane@example.com"
+                placeholder="name@example.com"
                 className={`w-full pl-10 pr-4 py-2.5 bg-[#f4f6f8] border rounded-xl text-sm text-[#1e293b] outline-none transition-colors placeholder:text-[#94a3b8] ${
                   errors.email
                     ? 'border-[#b91c1c] focus:border-[#b91c1c] focus:bg-white'
@@ -123,7 +93,7 @@ export function SignUpPage() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 {...register('password')}
-                placeholder="At least 6 characters"
+                placeholder="Enter your password"
                 className={`w-full pl-10 pr-11 py-2.5 bg-[#f4f6f8] border rounded-xl text-sm text-[#1e293b] outline-none transition-colors placeholder:text-[#94a3b8] ${
                   errors.password
                     ? 'border-[#b91c1c] focus:border-[#b91c1c] focus:bg-white'
@@ -150,24 +120,6 @@ export function SignUpPage() {
             )}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#59766e] uppercase tracking-wider mb-1.5">
-              Interests (Optional)
-            </label>
-            <div className="relative">
-              <Sparkles className="absolute left-3.5 top-3 w-4 h-4 text-[#59766e]" />
-              <input
-                type="text"
-                {...register('interests')}
-                placeholder="tech, writing, research"
-                className="w-full pl-10 pr-4 py-2.5 bg-[#f4f6f8] border border-[#e6e9ed] focus:border-[#467368] focus:bg-white rounded-xl text-sm text-[#1e293b] outline-none transition-colors placeholder:text-[#94a3b8]"
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-[#59766e]">
-              Comma-separated topics for user interest discovery
-            </p>
-          </div>
-
           <div className="pt-2">
             <button
               type="submit"
@@ -177,22 +129,22 @@ export function SignUpPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Creating Account...</span>
+                  <span>Signing In...</span>
                 </>
               ) : (
-                <span>Create Account</span>
+                <span>Sign In</span>
               )}
             </button>
           </div>
 
           <div className="pt-2 text-center">
             <p className="text-xs text-[#59766e]">
-              Already have an account?{' '}
+              Don't have an account?{' '}
               <Link
-                to="/signin"
+                to="/signup"
                 className="font-semibold text-[#3d6157] hover:underline"
               >
-                Sign In
+                Sign Up
               </Link>
             </p>
           </div>
@@ -212,4 +164,4 @@ export function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default SignInPage;

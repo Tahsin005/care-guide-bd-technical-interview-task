@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { api } from '../lib/api';
 
 const getInitialAuth = () => {
   try {
@@ -9,9 +10,10 @@ const getInitialAuth = () => {
       token: token || null,
       user: user || null,
       isAuthenticated: Boolean(token && user),
+      isLoading: true,
     };
   } catch {
-    return { token: null, user: null, isAuthenticated: false };
+    return { token: null, user: null, isAuthenticated: false, isLoading: true };
   }
 };
 
@@ -21,17 +23,43 @@ export const useAuthStore = create((set) => ({
   setAuth: (token, user) => {
     localStorage.setItem('noteful_token', token);
     localStorage.setItem('noteful_user', JSON.stringify(user));
-    set({ token, user, isAuthenticated: true });
+    set({ token, user, isAuthenticated: true, isLoading: false });
   },
 
   logout: () => {
     localStorage.removeItem('noteful_token');
     localStorage.removeItem('noteful_user');
-    set({ token: null, user: null, isAuthenticated: false });
+    set({ token: null, user: null, isAuthenticated: false, isLoading: false });
   },
 
   updateUser: (updatedUser) => {
     localStorage.setItem('noteful_user', JSON.stringify(updatedUser));
     set({ user: updatedUser });
+  },
+
+  checkAuth: async () => {
+    const delay = new Promise((resolve) => setTimeout(resolve, 600));
+    const token = localStorage.getItem('noteful_token');
+
+    if (!token) {
+      await delay;
+      set({ token: null, user: null, isAuthenticated: false, isLoading: false });
+      return;
+    }
+
+    try {
+      const [response] = await Promise.all([
+        api.get('/auth/me'),
+        delay,
+      ]);
+      const user = response.data;
+      localStorage.setItem('noteful_user', JSON.stringify(user));
+      set({ user, isAuthenticated: true, isLoading: false });
+    } catch {
+      await delay;
+      localStorage.removeItem('noteful_token');
+      localStorage.removeItem('noteful_user');
+      set({ token: null, user: null, isAuthenticated: false, isLoading: false });
+    }
   },
 }));
