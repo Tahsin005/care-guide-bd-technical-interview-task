@@ -148,7 +148,7 @@ export function NotesPage() {
             </div>
           </div>
         ) : isError ? (
-          <div className="bg-white rounded-3xl p-10 border border-[#e6e9ed] text-center space-y-4 max-w-md mx-auto shadow-sm">
+          <div className="rounded-3xl p-10 text-center space-y-4 max-w-md mx-auto">
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>

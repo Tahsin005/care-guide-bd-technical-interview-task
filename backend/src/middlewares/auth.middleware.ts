@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyToken, TokenPayload } from '../utils/token';
 import { AppError } from '../utils/app-error';
 import { UserRole } from '../models/user.model';
+import { userRepository } from '../repositories/user.repository';
 
 declare global {
   namespace Express {
@@ -37,17 +38,28 @@ export const authenticate = (
 };
 
 export const authorize = (...roles: UserRole[]) => {
-  return (req: Request, _res: Response, next: NextFunction): void => {
+  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     if (!req.user) {
       return next(AppError.unauthorized('Authentication required'));
     }
 
-    if (!roles.includes(req.user.role)) {
-      return next(
-        AppError.forbidden('You do not have permission to perform this action')
-      );
+    if (roles.includes(req.user.role)) {
+      return next();
     }
 
-    next();
+    // Fallback: Check DB if role was updated in DB while the user was logged in
+    try {
+      const dbUser = await userRepository.findById(req.user.userId);
+      if (dbUser && roles.includes(dbUser.role)) {
+        req.user.role = dbUser.role;
+        return next();
+      }
+    } catch {
+      // ignore db errors and proceed to forbidden
+    }
+
+    return next(
+      AppError.forbidden('You do not have permission to perform this action')
+    );
   };
 };

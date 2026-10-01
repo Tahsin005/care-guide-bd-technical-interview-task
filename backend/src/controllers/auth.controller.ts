@@ -4,6 +4,8 @@ import { sendSuccess } from '../utils/api-response';
 import { asyncHandler } from '../utils/async-handler';
 import { AppError } from '../utils/app-error';
 
+import { generateToken } from '../utils/token';
+
 export class AuthController {
   constructor(private readonly service: AuthService = authService) {}
 
@@ -22,7 +24,18 @@ export class AuthController {
       throw AppError.unauthorized('Authentication required');
     }
     const user = await this.service.getProfile(req.user.userId);
-    sendSuccess(res, user, 'Profile retrieved successfully', 200);
+
+    let token: string | undefined;
+    if (user.role !== req.user.role) {
+      token = generateToken({
+        userId: user._id.toString(),
+        role: user.role,
+        email: user.email,
+      });
+    }
+
+    const userData = user.toJSON ? user.toJSON() : user;
+    sendSuccess(res, { ...userData, ...(token ? { token } : {}) }, 'Profile retrieved successfully', 200);
   });
 }
 

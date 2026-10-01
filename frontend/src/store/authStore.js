@@ -52,9 +52,13 @@ export const useAuthStore = create((set) => ({
         api.get('/auth/me'),
         delay,
       ]);
-      const user = response.data;
-      localStorage.setItem('noteful_user', JSON.stringify(user));
-      set({ user, isAuthenticated: true, isLoading: false });
+      const data = response.data;
+      if (data?.token) {
+        localStorage.setItem('noteful_token', data.token);
+        set({ token: data.token });
+      }
+      localStorage.setItem('noteful_user', JSON.stringify(data));
+      set({ user: data, isAuthenticated: true, isLoading: false });
     } catch {
       await delay;
       localStorage.removeItem('noteful_token');
