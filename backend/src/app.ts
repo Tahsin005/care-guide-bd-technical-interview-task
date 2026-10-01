@@ -5,6 +5,7 @@ import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 import { sendSuccess } from './utils/api-response';
 import apiRouter from './routes';
 import healthRoutes from './routes/health.route';
+import { database } from './config/database';
 
 export const createApp = (): Application => {
   const app: Application = express();
@@ -14,6 +15,17 @@ export const createApp = (): Application => {
   app.use(express.urlencoded({ extended: true }));
 
   app.use(morganMiddleware);
+
+  app.use(async (_req: Request, _res: Response, next) => {
+    try {
+      if (!database.getConnectionStatus()) {
+        await database.connect();
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
 
   app.get('/', (_req: Request, res: Response) => {
     sendSuccess(res, {
@@ -37,4 +49,6 @@ export const createApp = (): Application => {
   return app;
 };
 
-export default createApp;
+const app = createApp();
+
+export default app;
