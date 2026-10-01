@@ -1,3 +1,4 @@
+import { Blobatar } from '@blobatar/react';
 import { FileText, Calendar, Pencil, Trash2 } from 'lucide-react';
 
 function stripHtml(html) {
@@ -21,7 +22,13 @@ function formatDate(dateString) {
   }
 }
 
-export function NotesTable({ notes = [], onEdit, onDelete }) {
+export function NotesTable({
+  notes = [],
+  isAdmin = false,
+  currentUserId = null,
+  onEdit,
+  onDelete,
+}) {
   return (
     <div className="bg-white rounded-3xl border border-[#e6e9ed] shadow-xs overflow-hidden">
       <div className="overflow-x-auto">
@@ -31,6 +38,11 @@ export function NotesTable({ notes = [], onEdit, onDelete }) {
               <th scope="col" className="py-4 pl-6 pr-4">
                 Title
               </th>
+              {isAdmin && (
+                <th scope="col" className="py-4 px-4 whitespace-nowrap">
+                  User
+                </th>
+              )}
               <th scope="col" className="py-4 px-4">
                 Preview
               </th>
@@ -52,6 +64,19 @@ export function NotesTable({ notes = [], onEdit, onDelete }) {
             {notes.map((note) => {
               const plainText = stripHtml(note?.content || '');
               const displayDate = formatDate(note?.updatedAt || note?.createdAt);
+              const owner =
+                note?.owner && typeof note.owner === 'object' ? note.owner : null;
+              const authorName =
+                owner?.name ||
+                (typeof note?.owner === 'string' ? 'User' : 'Unknown');
+              const authorEmail = owner?.email || '';
+              const seed = authorEmail || authorName || 'NoteUser';
+              const isSelf = Boolean(
+                currentUserId &&
+                  (owner?._id === currentUserId ||
+                    note?.owner === currentUserId ||
+                    owner?.id === currentUserId)
+              );
 
               return (
                 <tr
@@ -65,12 +90,43 @@ export function NotesTable({ notes = [], onEdit, onDelete }) {
                       <div className="w-8 h-8 rounded-xl bg-[#3d6157]/10 text-[#3d6157] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                         <FileText className="w-4 h-4" />
                       </div>
-                      <span className="font-semibold text-sm text-[#1e293b] group-hover:text-[#3d6157] transition-colors line-clamp-1 max-w-[200px] sm:max-w-[240px]">
+                      <span className="font-semibold text-sm text-[#1e293b] group-hover:text-[#3d6157] transition-colors line-clamp-1 max-w-[180px] sm:max-w-[220px]">
                         {note?.title || 'Untitled Note'}
                       </span>
                     </div>
                   </td>
 
+                  {isAdmin && (
+                    <td className="py-4 px-4 align-middle whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 border border-[#e6e9ed] shadow-xs">
+                          <Blobatar
+                            name={seed}
+                            size={28}
+                            animate="hover"
+                            title={authorName}
+                          />
+                        </div>
+                        <div className="min-w-0 max-w-[170px]">
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-semibold text-xs text-[#1e293b] truncate">
+                              {authorName}
+                            </p>
+                            {isSelf && (
+                              <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-[#3d6157]/10 text-[#3d6157] rounded-md shrink-0">
+                                You
+                              </span>
+                            )}
+                          </div>
+                          {authorEmail && (
+                            <p className="text-[10px] text-[#59766e] truncate">
+                              {authorEmail}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                  )}
 
                   <td className="py-4 px-4 align-middle text-[#59766e] max-w-xs md:max-w-md">
                     <p className="line-clamp-2 leading-relaxed">

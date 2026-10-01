@@ -18,7 +18,8 @@ export interface INoteRepository {
 
 export class NoteRepository implements INoteRepository {
   public async create(noteData: Partial<INote>): Promise<INoteDocument> {
-    return Note.create(noteData);
+    const note = await Note.create(noteData);
+    return note.populate('owner', 'name email');
   }
 
   public async findById(id: string): Promise<INoteDocument | null> {

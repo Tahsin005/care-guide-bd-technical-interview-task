@@ -20,6 +20,7 @@ import {
 
 export function NotesPage() {
   const { user } = useAuthStore();
+  const isAdmin = user?.role === 'admin';
   const [page, setPage] = useState(1);
   const limit = 12;
 
@@ -90,7 +91,7 @@ export function NotesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#1e293b]">
-              My Notes
+              {isAdmin ? 'All Notes' : 'My Notes'}
             </h1>
             <p className="mt-1 text-sm text-[#59766e]">
               Welcome back, {user?.name}! 
@@ -114,6 +115,9 @@ export function NotesPage() {
                 <thead>
                   <tr className="border-b border-[#e6e9ed] bg-[#f8fafc]/80 text-[#59766e] text-[11px] font-semibold uppercase tracking-wider">
                     <th className="py-4 pl-6 pr-4">Title</th>
+                    {isAdmin && (
+                      <th className="py-4 px-4 whitespace-nowrap">User</th>
+                    )}
                     <th className="py-4 px-4">Preview</th>
                     <th className="py-4 px-4">Last Modified</th>
                     <th className="py-4 px-4 hidden sm:table-cell">Length</th>
@@ -129,6 +133,17 @@ export function NotesPage() {
                           <div className="h-4 bg-[#f4f6f8] rounded-md w-32" />
                         </div>
                       </td>
+                      {isAdmin && (
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#f4f6f8]" />
+                            <div className="space-y-1">
+                              <div className="h-3.5 bg-[#f4f6f8] rounded-md w-20" />
+                              <div className="h-2.5 bg-[#f4f6f8] rounded-md w-24" />
+                            </div>
+                          </div>
+                        </td>
+                      )}
                       <td className="py-4 px-4">
                         <div className="h-3 bg-[#f4f6f8] rounded-md w-48" />
                       </td>
@@ -174,7 +189,9 @@ export function NotesPage() {
             <div className="space-y-1.5">
               <h3 className="text-xl font-bold text-[#1e293b]">No notes yet</h3>
               <p className="text-md text-[#59766e] max-w-sm mx-auto leading-relaxed">
-                Create your first rich-text note to capture ideas, meeting points, and research notes.
+                {isAdmin
+                  ? 'No notes have been created yet by any user.'
+                  : 'Create your first rich-text note to capture ideas, meeting points, and research notes.'}
               </p>
             </div>
             <button
@@ -190,6 +207,8 @@ export function NotesPage() {
           <div className="space-y-8">
             <NotesTable
               notes={notes}
+              isAdmin={isAdmin}
+              currentUserId={user?._id}
               onEdit={handleOpenEdit}
               onDelete={handleDeleteRequest}
             />

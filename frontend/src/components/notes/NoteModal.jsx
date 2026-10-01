@@ -79,9 +79,24 @@ function NoteModalDialog({
       >
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e6e9ed] bg-white">
-          <h2 className="text-lg font-bold text-[#1e293b]">
-            {isEditing ? 'Edit Note' : 'Create New Note'}
-          </h2>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-[#1e293b]">
+              {isEditing ? 'Edit Note' : 'Create New Note'}
+            </h2>
+            {isEditing && note?.owner && (
+              <p className="text-[11px] text-[#59766e] truncate mt-0.5">
+                Author:{' '}
+                <span className="font-semibold text-[#1e293b]">
+                  {typeof note.owner === 'object' ? note.owner.name : 'User'}
+                </span>
+                {typeof note.owner === 'object' && note.owner.email && (
+                  <span className="text-[#94a3b8] ml-1">
+                    ({note.owner.email})
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             {isEditing && onDeleteRequest && (
               <button
